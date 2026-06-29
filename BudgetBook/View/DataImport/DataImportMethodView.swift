@@ -8,11 +8,21 @@
 import SwiftUI
 
 struct DataImportMethodView: View {
+    
+    @Binding var selection: Int
+    
     var body: some View {
-        Text("3")
+        VStack {
+            Text("3")
+            Button {
+                selection = 1
+            } label: {
+                Text("ボタン")
+            }
+        }
     }
 }
 
 #Preview {
-    DataImportMethodView()
+    DataImportMethodView(selection: .constant(1))
 }

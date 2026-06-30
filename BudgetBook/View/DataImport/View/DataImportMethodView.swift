@@ -9,7 +9,21 @@ import SwiftUI
 
 struct DataImportMethodView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Button {
+            
+        } label: {
+            HStack {
+                Image(systemName: "keyboard")
+                    .resizable()
+                    .frame(width: 20, height: 40)
+                    .background(Color.black)
+                VStack {
+                    Text("手入力")
+                    Text("手入力")
+                }
+                .foregroundStyle(Color.black)
+            }
+        }
     }
 }
 

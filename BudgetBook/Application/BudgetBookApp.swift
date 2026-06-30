@@ -11,7 +11,10 @@ import SwiftUI
 struct BudgetBookApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            GeometryReader { geo in
+                ContentView()
+                    .environment(\.rootSize, geo.size)
+            }
         }
     }
 }

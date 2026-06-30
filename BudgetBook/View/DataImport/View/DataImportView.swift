@@ -24,6 +24,7 @@ struct DataImportView: View {
             DataImportMethodView()
                 .presentationDragIndicator(.visible)
                 .presentationDetents([.medium])
+                .presentationCornerRadius(8)
         }
     }
 }

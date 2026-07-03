@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct DataImportMethodView: View {
+    
+    @Environment(\.rootSize) var rootSize: CGSize
+    
     var body: some View {
         Button {
             
@@ -19,14 +22,18 @@ struct DataImportMethodView: View {
                     .background(Color.black)
                 VStack {
                     Text("手入力")
-                    Text("手入力")
+                    Text("\(rootSize.width)")
                 }
                 .foregroundStyle(Color.black)
             }
         }
+        .frame(width: rootSize.width, height: 100)
     }
 }
 
 #Preview {
-    DataImportMethodView()
+    GeometryReader { geo in
+        DataImportMethodView()
+            .environment(\.rootSize, geo.size)
+    }
 }

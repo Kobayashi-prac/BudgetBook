@@ -9,10 +9,12 @@ import SwiftUI
 
 struct DataImportMethodView: View {
     
+    @State var isSelected: Bool = false
+    
     var body: some View {
         VStack(alignment: .leading) {
             Button {
-                
+                isSelected = true
             } label: {
                 HStack(alignment: .center, spacing: 0) {
                     ZStack {
@@ -39,13 +41,30 @@ struct DataImportMethodView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: 100)
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(.secondary, lineWidth: 2)
-            }
+            .buttonStyle(SelectButtonStyle(isSelected: isSelected))
         }
         // 内部の要素に余白を設ける
         .padding()
+    }
+}
+
+struct SelectButtonStyle: ButtonStyle {
+    
+    var isSelected: Bool
+    
+    func makeBody(configuration: Configuration) -> some View {
+        return configuration.label
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected ? Color(red: 0.96, green: 0.97, blue: 0.98)  : .white)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(
+                        isSelected ? .black : .gray,
+                        lineWidth: 2
+                    )
+            }
     }
 }
 

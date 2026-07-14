@@ -28,7 +28,7 @@ struct ContentView: View {
                 .tag(1)
             
             /// データ取り込み
-            DataImportView()
+            TestDataImportView()
                 .tabItem {
                     Label("追加", systemImage: "plus")
                 }

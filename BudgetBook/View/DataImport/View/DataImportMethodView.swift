@@ -1,5 +1,5 @@
 //
-//  DataImportView.swift
+//  DataImportMethodView.swift
 //  BudgetBook
 //
 //  Created by swiftUI on 2026/06/29.
@@ -7,10 +7,14 @@
 
 import SwiftUI
 
-enum DataImportMethod: CaseIterable {
+enum DataImportMethod: CaseIterable, Identifiable {
     case manual
     case picture
     case dataFile
+    
+    var id: Self {
+        self
+    }
     
     var iconName: String {
         switch self {
@@ -46,38 +50,25 @@ enum DataImportMethod: CaseIterable {
     }
 }
 
-struct DataImportView: View {
-            
+struct DataImportMethodView: View {
+    
+    @Environment(\.dismiss) private var dismiss
+    @State private var isSelectedMethod: DataImportMethod?
+    
     var body: some View {
-        VStack() {
-            ForEach(DataImportMethod.allCases, id: \.self) { method in
-                DataImportMethodView(method: method)
-                Spacer()
-                    .frame(height: 10)
+        VStack(spacing: 10) {
+            ForEach(DataImportMethod.allCases) { method in
+                Button {
+                    isSelectedMethod = method
+                } label: {
+                    MethodView(method: method)
+                }
+                .frame(maxWidth: .infinity, maxHeight: 100)
+                .buttonStyle(MethodButtonStyle(isSelected: isSelectedMethod == method))
             }
         }
         // 内部の要素に余白を設ける
         .padding()
-    }
-}
-
-struct DataImportMethodView: View {
-    
-    @State var isSelected: Bool = false
-    
-    var method: DataImportMethod
-    
-    var body: some View {
-        Button {
-            isSelected = true
-        } label: {
-            MethodView(method: method)
-        }
-        .frame(maxWidth: .infinity, maxHeight: 100)
-        .buttonStyle(MethodButtonStyle(isSelected: isSelected))
-        .onDisappear {
-            isSelected = false
-        }
     }
 }
 
@@ -121,18 +112,19 @@ struct MethodButtonStyle: ButtonStyle {
         return configuration.label
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? Color(red: 0.96, green: 0.97, blue: 0.98) : .white)
+                    .fill(isSelected ? Color(.secondarySystemBackground) : Color(.systemBackground))
             )
             .overlay {
                 RoundedRectangle(cornerRadius: 12)
                     .strokeBorder(
-                        isSelected ? .black : .gray,
+                        isSelected ? Color.primary : .gray,
                         lineWidth: 2
                     )
             }
+            .opacity(configuration.isPressed ? 0.7 : 1)  // 押下フィードバック
     }
 }
 
 #Preview {
-    DataImportView()
+    DataImportMethodView()
 }

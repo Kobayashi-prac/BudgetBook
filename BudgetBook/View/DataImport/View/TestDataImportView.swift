@@ -21,10 +21,10 @@ struct TestDataImportView: View {
             }
         }
         .sheet(isPresented: $isShowSheet) {
-            DataImportView()
+            DataImportMethodView()
                 .presentationDragIndicator(.visible)
                 .presentationDetents([.medium])
-                .presentationCornerRadius(12)
+                .presentationCornerRadius(30)
         }
     }
 }

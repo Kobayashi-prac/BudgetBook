@@ -66,6 +66,16 @@ struct DataImportMethodView: View {
                 .frame(maxWidth: .infinity, maxHeight: 100)
                 .buttonStyle(MethodButtonStyle(isSelected: isSelectedMethod == method))
             }
+            
+            // キャンセルボタン
+            Button {
+                dismiss()
+            } label: {
+                Text("キャンセル")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.gray)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+            }
         }
         // 内部の要素に余白を設ける
         .padding()

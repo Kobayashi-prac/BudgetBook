@@ -50,7 +50,6 @@ enum DataImportMethod: CaseIterable, Identifiable {
     }
 }
 
-@available(iOS 17.0, *)
 struct DataImportMethodView: View {
     
     @Environment(\.dismiss) private var dismiss
@@ -82,16 +81,6 @@ struct DataImportMethodView: View {
         }
         // 内部の要素に余白を設ける
         .padding()
-//        .navigationDestination(item: $isSelectedMethod) { method in
-//            switch method {
-//            case .manual:
-//                ManualImportView()
-//            case .picture:
-//                PictureImportView()
-//            case .dataFile:
-//                DataFileImportView()
-//            }
-//        }
     }
 }
 
@@ -149,9 +138,5 @@ struct MethodButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    if #available(iOS 17.0, *) {
-        DataImportMethodView(isSelectedMethod: .constant(nil))
-    } else {
-        // Fallback on earlier versions
-    }
+    DataImportMethodView(isSelectedMethod: .constant(nil))
 }

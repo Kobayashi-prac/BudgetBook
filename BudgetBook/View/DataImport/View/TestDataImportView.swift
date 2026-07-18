@@ -10,37 +10,47 @@ import SwiftUI
 struct TestDataImportView: View {
     
     @State private var isShowSheet: Bool = false
-    @State private var isSelectedMethod: DataImportMethod?
     
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("3")
-                Button {
+            ZStack {
+                
+                // ダミー
+                VStack {
+                    Text("3")
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isShowSheet = true
+                        }
+                    } label: {
+                        Text("追加")
+                    }
+                }
+                .onAppear {
                     isShowSheet = true
-                } label: {
-                    Text("追加")
+                }
+                
+                // sheet表示
+                if isShowSheet {
+                    // 半透明の背景
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                isShowSheet = false
+                            }
+                        }
+                        .transition(.opacity)
+                    
+                    // sheet風のパネル
+                    DataImportMethodView(isShowSheet: $isShowSheet)
+                    .frame(height: 500)
+                    .background(Color.white)
+                    .cornerRadius(20)
+                    .offset(x: 0, y: 200)
+                    .transition(.move(edge: .bottom))
                 }
             }
-            .onAppear {
-                isShowSheet = true
-            }
-            .navigationDestination(item: $isSelectedMethod) { method in
-                switch method {
-                case .manual:
-                    ManualImportView()
-                case .picture:
-                    PictureImportView()
-                case .dataFile:
-                    DataFileImportView()
-                }
-            }
-        }
-        .sheet(isPresented: $isShowSheet) {
-            DataImportMethodView(isSelectedMethod: $isSelectedMethod)
-                .presentationDragIndicator(.visible)
-                .presentationDetents([.medium])
-                .presentationCornerRadius(30)
         }
     }
 }

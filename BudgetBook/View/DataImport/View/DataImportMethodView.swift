@@ -54,13 +54,18 @@ struct DataImportMethodView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    @Binding var isSelectedMethod: DataImportMethod?
+    @State private var isSelectedMethod: DataImportMethod?
+    
+    @Binding var isShowSheet: Bool
     
     var body: some View {
         VStack(spacing: 10) {
+            
+            // 種別選択
+            Text("追加方法を選択してください")
+                .fontWeight(.semibold)
             ForEach(DataImportMethod.allCases) { method in
                 Button {
-                    dismiss()
                     isSelectedMethod = method
                 } label: {
                     MethodView(method: method)
@@ -71,7 +76,9 @@ struct DataImportMethodView: View {
             
             // キャンセルボタン
             Button {
-                dismiss()
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isShowSheet = false
+                }
             } label: {
                 Text("キャンセル")
                     .font(.system(size: 20, weight: .semibold))
@@ -81,6 +88,16 @@ struct DataImportMethodView: View {
         }
         // 内部の要素に余白を設ける
         .padding()
+        .navigationDestination(item: $isSelectedMethod) { method in
+            switch method {
+            case .manual:
+                ManualImportView()
+            case .picture:
+                PictureImportView()
+            case .dataFile:
+                DataFileImportView()
+            }
+        }
     }
 }
 
@@ -138,5 +155,5 @@ struct MethodButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    DataImportMethodView(isSelectedMethod: .constant(nil))
+    DataImportMethodView(isShowSheet: .constant(true))
 }

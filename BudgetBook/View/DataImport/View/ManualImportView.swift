@@ -12,8 +12,13 @@ enum TransactionType: String, CaseIterable {
     case income = "収入"
 }
 
+enum TransactionCategory {
+    
+}
+
 struct ManualImportView: View {
     
+    @Environment(\.dismiss) var dismiss
     @State private var amount: Int?
     @FocusState private var isFocused: Bool
     
@@ -31,16 +36,33 @@ struct ManualImportView: View {
                 .multilineTextAlignment(.center)
                 .focused($isFocused)
                 .keyboardType(.numberPad)
-                .submitLabel(.done)
-                .onSubmit {
-                    isFocused = false
-                }
                 .onAppear {
                     isFocused = true
                 }
+            
+            VStack {
+                Text("カテゴリ")
+                    .padding(.horizontal, 16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+            }
+            
+            Spacer()
+        }
+        .onTapGesture {
+            isFocused = false
         }
         .navigationTitle("取引を追加")
+        .navigationBarBackButtonHidden(true)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    isFocused = false
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Text("保存")
             }

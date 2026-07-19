@@ -76,12 +76,33 @@ enum TransactionCategory: CaseIterable, Identifiable {
             return "ellipsis"
         }
     }
+    
+    var subcategories: [String] {
+        switch self {
+        case .food:
+            return ["レストラン"]
+        case .dailyGoods:
+            return ["スーパー", "ドラッグストア"]
+        case .transport:
+            return []
+        case .housing:
+            return []
+        case .entertainment:
+            return []
+        case .medical:
+            return []
+        case .cafe:
+            return []
+        case .other:
+            return []
+        }
+    }
 }
 
 struct ManualImportView: View {
     
     @Environment(\.dismiss) var dismiss
-    @State private var amount: Int?
+    @State private var isSelectedCategory: TransactionCategory?
     @FocusState private var isFocused: Bool
     
     var body: some View {
@@ -89,28 +110,17 @@ struct ManualImportView: View {
             TransactionTypeTab()
                 .padding()
             
-            Text("金額")
-                .opacity(0.5)
+            amountImputView(isFocused: _isFocused)
             
-            // TODO: .focused($isFocused)で下にズレる
-            // TODO: 横幅の制限
-            // TODO: 円の表示
-            TextField("0", value: $amount, format: .number)
-                .font(.system(size: 50, weight: .bold, design: .rounded))
-                .fixedSize()
-                .multilineTextAlignment(.center)
-                .focused($isFocused)
-                .keyboardType(.numberPad)
-                .onAppear {
-                    isFocused = true
-                }
+            CategoryView(isSelectedCategory: $isSelectedCategory)
             
-            CategoryView()
+            DetailView(isSelectedCategory: $isSelectedCategory)
             
             Spacer()
         }
         .onTapGesture {
             isFocused = false
+            isSelectedCategory = nil
         }
         .navigationTitle("取引を追加")
         .navigationBarBackButtonHidden(true)
@@ -127,13 +137,13 @@ struct ManualImportView: View {
                 Text("保存")
             }
         }
+        .background(Color(.systemGroupedBackground))
     }
 }
 
 struct TransactionTypeTab: View {
     
     @Namespace private var select
-    
     @State private var selection: Int = 0
     
     let transactions = TransactionType.allCases
@@ -145,7 +155,7 @@ struct TransactionTypeTab: View {
                     .font(.subheadline.bold())
                     .foregroundStyle(selection == index ? .white : .secondary)
                     .frame(maxWidth: .infinity)
-                     // TODO: 高さかpaddingか
+                // TODO: 高さかpaddingか
                     .padding(.vertical, 10)
                     .background {
                         if selection == index {
@@ -171,9 +181,33 @@ struct TransactionTypeTab: View {
     }
 }
 
+struct amountImputView: View {
+    
+    @State private var amount: Int?
+    @FocusState var isFocused: Bool
+    
+    var body: some View {
+        Text("金額")
+            .opacity(0.5)
+        
+        // TODO: .focused($isFocused)で下にズレる
+        // TODO: 横幅の制限
+        // TODO: 円の表示
+        TextField("0", value: $amount, format: .number)
+            .font(.system(size: 50, weight: .bold, design: .rounded))
+            .fixedSize()
+            .multilineTextAlignment(.center)
+            .focused($isFocused)
+            .keyboardType(.numberPad)
+            .onAppear {
+                isFocused = true
+            }
+    }
+}
+
 struct CategoryView: View {
     
-    @State private var isSelectedCategory: TransactionCategory?
+    @Binding var isSelectedCategory: TransactionCategory?
     
     var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 4)
     
@@ -192,10 +226,10 @@ struct CategoryView: View {
                                 .foregroundStyle(Color(.systemGray5))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(
-                                        isSelectedCategory == category ? .black : .clear,
-                                        lineWidth: 2
-                                    )
+                                        .strokeBorder(
+                                            isSelectedCategory == category ? .black : .clear,
+                                            lineWidth: 2
+                                        )
                                 )
                             Image(systemName: category.iconName)
                                 .resizable()
@@ -214,6 +248,60 @@ struct CategoryView: View {
             }
             .padding()
         }
+        // TODO: 範囲外をタップしたら選択解除
+        .onTapGesture {
+            isSelectedCategory = nil
+        }
+    }
+}
+
+struct DetailView: View {
+    
+    @State private var subcategory: String = ""
+    @State private var selectedDate: Date = Date()
+    
+    @Binding var isSelectedCategory: TransactionCategory?
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                row("calendar", "日付")
+                Spacer()
+                ZStack {
+                    DatePicker("",
+                               selection: $selectedDate,
+                               displayedComponents: [.date])
+                    .labelsHidden()
+                    .colorMultiply(.clear)
+                    Text(selectedDate,
+                         format: Date.FormatStyle(date: .numeric)
+                        .locale(Locale(identifier: "ja_JP")))
+                    .foregroundStyle(.secondary)
+                }
+            }
+            Divider()
+            HStack {
+                row("creditcard", "お店・摘要")
+                Spacer()
+                if let category = isSelectedCategory {
+                    Menu {
+                        Picker("", selection: $subcategory) {
+                            ForEach(category.subcategories, id: \.self) { category in
+                                Text(category)
+                            }
+                        }
+                    } label: {
+                        Text(subcategory.isEmpty ? category.subcategories.first ?? "" : subcategory)
+                            .foregroundStyle(.black)
+                            .opacity(0.5)
+                            .padding()
+                    }
+                }
+            }
+        }
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .padding(.horizontal)
     }
 }
 

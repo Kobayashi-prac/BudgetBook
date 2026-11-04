@@ -160,7 +160,7 @@ struct TransactionTypeTab: View {
                     .background {
                         if selection == index {
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(.red)
+                                .fill(.gray)
                                 .matchedGeometryEffect(id: "selectType",
                                                        in: select)
                         }

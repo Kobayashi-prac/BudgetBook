@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-@main
 struct BudgetBookApp: App {
     var body: some Scene {
         WindowGroup {

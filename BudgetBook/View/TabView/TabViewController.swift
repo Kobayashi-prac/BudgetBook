@@ -17,10 +17,10 @@ class TabViewController: UITabBarController {
     
     private func setupTabViewControllers() {
         
-        let home = HomeViewController()
+        let home = UINavigationController(rootViewController: HomeViewController())
         home.tabBarItem = UITabBarItem(title: "ホーム", image: UIImage(systemName: "house"), tag: 0)
         
-        let cashFlow = CashFlowViewController()
+        let cashFlow = UINavigationController(rootViewController: CashFlowViewController())
         cashFlow.tabBarItem = UITabBarItem(title: "収支", image: UIImage(systemName: "arrow.left.arrow.right"), tag: 1)
         
         viewControllers = [home, cashFlow]

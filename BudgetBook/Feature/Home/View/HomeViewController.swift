@@ -9,11 +9,15 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
+    let viewModel = HomeViewModel()
+    let tableView = UITableView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupNavigationBar()
         setupTableView()
+        registerCell()
     }
     
     private func setupNavigationBar() {
@@ -30,7 +34,6 @@ class HomeViewController: UIViewController {
     }
     
     private func setupTableView() {
-        let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = ColorResource.defaultBackgroundColor
@@ -44,15 +47,37 @@ class HomeViewController: UIViewController {
         ])
     }
     
+    private func registerCell() {
+        viewModel.cellType.forEach { type in
+            tableView.register(type.cellClass, forCellReuseIdentifier: type.identifier)
+        }
+    }
+    
 }
 
 extension HomeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
+        viewModel.cellType.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
+        var cell = UITableViewCell()
+        let cellType = viewModel.cellType[indexPath.row]
+        switch cellType {
+        case .daily:
+            guard let dailyCell = tableView.dequeueReusableCell(withIdentifier: cellType.identifier,
+                                                                for: indexPath) as? MonthlyCashFlowCell else {
+                return cell
+            }
+            cell = dailyCell
+        case .monthly:
+            guard let monthlyCell = tableView.dequeueReusableCell(withIdentifier: cellType.identifier,
+                                                                  for: indexPath) as? MonthlyCashFlowCell else {
+                return cell
+            }
+            cell = monthlyCell
+        }
+        return cell
     }
 }
 

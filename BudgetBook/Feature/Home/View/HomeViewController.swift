@@ -18,6 +18,7 @@ class HomeViewController: UIViewController {
         setupNavigationBar()
         setupTableView()
         registerCell()
+        setupCellHeight()
     }
     
     private func setupNavigationBar() {
@@ -53,6 +54,11 @@ class HomeViewController: UIViewController {
         }
     }
     
+    private func setupCellHeight() {
+        tableView.estimatedRowHeight = 50
+        tableView.rowHeight = UITableView.automaticDimension
+    }
+    
 }
 
 extension HomeViewController: UITableViewDataSource {
@@ -82,4 +88,7 @@ extension HomeViewController: UITableViewDataSource {
 }
 
 extension HomeViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 400
+    }
 }

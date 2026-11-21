@@ -18,7 +18,6 @@ class HomeViewController: UIViewController {
         setupNavigationBar()
         setupTableView()
         registerCell()
-        setupCellHeight()
     }
     
     private func setupNavigationBar() {
@@ -53,12 +52,6 @@ class HomeViewController: UIViewController {
             tableView.register(type.cellClass, forCellReuseIdentifier: type.identifier)
         }
     }
-    
-    private func setupCellHeight() {
-        tableView.estimatedRowHeight = 50
-        tableView.rowHeight = UITableView.automaticDimension
-    }
-    
 }
 
 extension HomeViewController: UITableViewDataSource {
@@ -71,8 +64,10 @@ extension HomeViewController: UITableViewDataSource {
         let cellType = viewModel.cellType[indexPath.row]
         switch cellType {
         case .daily:
+            // dequeueで生成されたセルはキャストに失敗してもテーブルビュー上のその行の位置に置くところまで進めている（推測）
             guard let dailyCell = tableView.dequeueReusableCell(withIdentifier: cellType.identifier,
-                                                                for: indexPath) as? MonthlyCashFlowCell else {
+                                                                for: indexPath) as? DailyCashFlowCell else {
+                // dailyCellとcellが二重に表示される
                 return cell
             }
             cell = dailyCell
@@ -89,6 +84,6 @@ extension HomeViewController: UITableViewDataSource {
 
 extension HomeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 400
+        return UITableView.automaticDimension
     }
 }

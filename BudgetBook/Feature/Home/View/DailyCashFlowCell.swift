@@ -9,11 +9,12 @@ import UIKit
 
 class DailyCashFlowCell: UITableViewCell {
     
-    let titleLabel = UILabel()
-    let dateLabel = UILabel()
-    let incomeView = UIStackView()
-    let expenseView = UIStackView()
-    let DetailView = UIStackView()
+    private let titleLabel = UILabel()
+    private let dateLabel = UILabel()
+    private let incomeView = UIStackView()
+    private let expenseContainerView = UIStackView()
+    private let expenseTitleView = UIStackView()
+    private let expenseDetailView = UIStackView()
     
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -31,6 +32,9 @@ class DailyCashFlowCell: UITableViewCell {
         setupDateLabel()
         setupIncomeView()
         setupExpenseView()
+    }
+    
+    func configure() {
         setupDetailView()
     }
     
@@ -49,6 +53,7 @@ class DailyCashFlowCell: UITableViewCell {
     }
     
     private func setupDateLabel() {
+        // Date.formatStyleを使う
         dateLabel.text = "\(Date.now.formatted(.dateTime.month().day().weekday().locale(Locale(identifier: "ja_JP"))))"
         contentView.addSubview(dateLabel)
         
@@ -59,11 +64,14 @@ class DailyCashFlowCell: UITableViewCell {
         ])
     }
     
+    // MARK: incomeView
+    
     private func setupIncomeView() {
         let incomeLabel = UILabel()
         incomeLabel.text = "収入"
         incomeLabel.font = .systemFont(ofSize: 20, weight: .semibold)
         
+        // TODO: 外から渡せるようにする
         let amountLabel = UILabel()
         amountLabel.text = "+¥ 1000"
         amountLabel.font = .systemFont(ofSize: 20)
@@ -71,7 +79,6 @@ class DailyCashFlowCell: UITableViewCell {
         incomeView.addArrangedSubview(incomeLabel)
         incomeView.addArrangedSubview(amountLabel)
         
-        // incomeView.isHidden = true
         incomeView.backgroundColor = .white
         incomeView.axis = .horizontal
         incomeView.alignment = .center
@@ -94,40 +101,53 @@ class DailyCashFlowCell: UITableViewCell {
         ])
     }
     
+    // MARK: ExpenseView
+    
+    /// 支出ビューの全体
     private func setupExpenseView() {
-        let expenseLabel = UILabel()
-        expenseLabel.text = "支出"
-        expenseLabel.font = .systemFont(ofSize: 20, weight: .semibold)
+        setupExpenseTitleView()
         
+        expenseContainerView.addArrangedSubview(expenseTitleView)
+        expenseContainerView.axis = .vertical
+        
+        contentView.addSubview(expenseContainerView)
+        expenseContainerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            expenseContainerView.topAnchor.constraint(equalTo: incomeView.bottomAnchor, constant: 15),
+            expenseContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            expenseContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            expenseContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
+        ])
+    }
+    
+    /// 支出ビューのタイトル部分
+    private func setupExpenseTitleView () {
+        let titleLabel = UILabel()
+        titleLabel.text = "支出"
+        titleLabel.font = .systemFont(ofSize: 20, weight: .semibold)
+        
+        // TODO: 外から渡せるようにする
         let amountLabel = UILabel()
         amountLabel.text = "-¥ 1000"
         amountLabel.font = .systemFont(ofSize: 20)
         
-        expenseView.addArrangedSubview(expenseLabel)
-        expenseView.addArrangedSubview(amountLabel)
+        expenseTitleView.addArrangedSubview(titleLabel)
+        expenseTitleView.addArrangedSubview(amountLabel)
         
-        expenseView.backgroundColor = .white
-        expenseView.axis = .horizontal
-        expenseView.alignment = .center
-        expenseView.layer.cornerRadius = 8
-        expenseView.distribution = .fill
-        expenseView.isLayoutMarginsRelativeArrangement = true
-        expenseView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 25,
-                                                                      leading: 20,
-                                                                      bottom: 25,
-                                                                      trailing: 20)
-        
-        contentView.addSubview(expenseView)
-        
-        expenseView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            expenseView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            expenseView.topAnchor.constraint(equalTo: incomeView.bottomAnchor, constant: 15),
-            expenseView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            expenseView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
-        ])
+        amountLabel.setContentHuggingPriority(.required, for: .horizontal)
+        expenseTitleView.backgroundColor = .white
+        expenseTitleView.axis = .horizontal
+        expenseTitleView.alignment = .center
+        expenseTitleView.layer.cornerRadius = 8
+        expenseTitleView.distribution = .fill
+        expenseTitleView.isLayoutMarginsRelativeArrangement = true
+        expenseTitleView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 25,
+                                                                          leading: 20,
+                                                                          bottom: 25,
+                                                                          trailing: 20)
     }
     
+    /// 支出ビューの詳細部分
     private func setupDetailView() {
         let imageView = UIImageView(image: UIImage(systemName: "star.fill"))
         imageView.layer.cornerRadius = 8
@@ -154,31 +174,21 @@ class DailyCashFlowCell: UITableViewCell {
         amountLabel.text = "-¥ 1000"
         amountLabel.font = .systemFont(ofSize: 20)
         
-        DetailView.addArrangedSubview(imageView)
-        DetailView.addArrangedSubview(detailLabelView)
-        DetailView.addArrangedSubview(amountLabel)
+        expenseDetailView.addArrangedSubview(imageView)
+        expenseDetailView.addArrangedSubview(detailLabelView)
+        expenseDetailView.addArrangedSubview(amountLabel)
         
-        DetailView.backgroundColor = .white
-        DetailView.axis = .horizontal
-        DetailView.alignment = .center
-        DetailView.distribution = .fill
-        DetailView.spacing = 12
-        DetailView.isLayoutMarginsRelativeArrangement = true
-        DetailView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 10,
+        expenseDetailView.backgroundColor = .white
+        expenseDetailView.axis = .horizontal
+        expenseDetailView.alignment = .center
+        expenseDetailView.distribution = .fill
+        expenseDetailView.spacing = 12
+        expenseDetailView.isLayoutMarginsRelativeArrangement = true
+        expenseDetailView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 10,
                                                                       leading: 20,
                                                                       bottom: 10,
                                                                       trailing: 20)
-        
-        contentView.addSubview(DetailView)
-        
-        DetailView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            DetailView.centerXAnchor.constraint(equalTo: expenseView.centerXAnchor),
-            DetailView.topAnchor.constraint(equalTo: expenseView.bottomAnchor),
-            DetailView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            DetailView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-            DetailView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
-        ])
+        expenseContainerView.addArrangedSubview(expenseDetailView)
     }
     
 }

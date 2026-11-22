@@ -70,6 +70,7 @@ extension HomeViewController: UITableViewDataSource {
                 // dailyCellとcellが二重に表示される
                 return cell
             }
+            dailyCell.configure()
             cell = dailyCell
         case .monthly:
             guard let monthlyCell = tableView.dequeueReusableCell(withIdentifier: cellType.identifier,

@@ -49,14 +49,12 @@ class DailyCashFlowCell: UITableViewCell {
     }
     
     private func setupDateLabel() {
-        dateLabel.text = "\(Date())"
-        dateLabel.font = .systemFont(ofSize: 18, weight: .light)
-        
+        dateLabel.text = "\(Date.now.formatted(.dateTime.month().day().weekday().locale(Locale(identifier: "ja_JP"))))"
         contentView.addSubview(dateLabel)
         
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            dateLabel.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 0),
+            dateLabel.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 10),
             dateLabel.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor)
         ])
     }

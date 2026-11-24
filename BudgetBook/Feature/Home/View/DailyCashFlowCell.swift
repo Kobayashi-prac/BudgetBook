@@ -39,7 +39,7 @@ class DailyCashFlowCell: UITableViewCell {
     }
     
     private func setupTitleLabel() {
-        titleLabel.text = "今日の収支"
+        titleLabel.text = "今日の家計簿"
         titleLabel.font = .systemFont(ofSize: 20, weight: .semibold)
         
         contentView.addSubview(titleLabel)
@@ -64,7 +64,7 @@ class DailyCashFlowCell: UITableViewCell {
         ])
     }
     
-    // MARK: incomeView
+    // MARK: - incomeView
     
     private func setupIncomeView() {
         let incomeLabel = UILabel()
@@ -101,16 +101,18 @@ class DailyCashFlowCell: UITableViewCell {
         ])
     }
     
-    // MARK: ExpenseView
+    // MARK: - ExpenseView
     
     /// 支出ビューの全体
     private func setupExpenseView() {
         setupExpenseTitleView()
         
         expenseContainerView.addArrangedSubview(expenseTitleView)
+        expenseContainerView.addArrangedSubview(makeSeparator())
         expenseContainerView.axis = .vertical
         
         contentView.addSubview(expenseContainerView)
+        
         expenseContainerView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             expenseContainerView.topAnchor.constraint(equalTo: incomeView.bottomAnchor, constant: 15),
@@ -118,6 +120,17 @@ class DailyCashFlowCell: UITableViewCell {
             expenseContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
             expenseContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
         ])
+    }
+    
+    /// 区切り線の生成
+    private func makeSeparator() -> UIView {
+        let border = UIView()
+        border.backgroundColor = .separator
+        border.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            border.heightAnchor.constraint(equalToConstant: 1)
+        ])
+        return border
     }
     
     /// 支出ビューのタイトル部分
@@ -149,34 +162,17 @@ class DailyCashFlowCell: UITableViewCell {
     
     /// 支出ビューの詳細部分
     private func setupDetailView() {
-        let imageView = UIImageView(image: UIImage(systemName: "star.fill"))
-        imageView.layer.cornerRadius = 8
-        imageView.backgroundColor = .gray
-        imageView.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .black
-        
-        let titleLabel = UILabel()
-        titleLabel.text = "ランチ"
-        titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        
-        let subtitleLabel = UILabel()
-        titleLabel.text = "食費・レストラン"
-        titleLabel.font = .systemFont(ofSize: 13)
-        titleLabel.textColor = .lightGray
-        
-        let detailLabelView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
-        detailLabelView.axis = .vertical
-        detailLabelView.alignment = .leading
-        detailLabelView.spacing = 2
-        
-        let amountLabel = UILabel()
-        amountLabel.text = "-¥ 1000"
-        amountLabel.font = .systemFont(ofSize: 20)
+        let imageView = makeDetailImageView()
+        let detailLabelView = makeDetailTitleLabelView()
+        let amountLabel = makeAmountlabel()
         
         expenseDetailView.addArrangedSubview(imageView)
         expenseDetailView.addArrangedSubview(detailLabelView)
         expenseDetailView.addArrangedSubview(amountLabel)
+        
+        detailLabelView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        amountLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        amountLabel.setContentCompressionResistancePriority(UILayoutPriority(999), for: .horizontal)
         
         expenseDetailView.backgroundColor = .white
         expenseDetailView.axis = .horizontal
@@ -189,6 +185,51 @@ class DailyCashFlowCell: UITableViewCell {
                                                                       bottom: 10,
                                                                       trailing: 20)
         expenseContainerView.addArrangedSubview(expenseDetailView)
+    }
+    
+    /// アイコン画像ビューの生成
+    private func makeDetailImageView() -> UIImageView {
+        let imageView = UIImageView(image: UIImage(systemName: "star.fill"))
+        imageView.layer.cornerRadius = 8
+        imageView.backgroundColor = .lightGray
+        imageView.tintColor = .black
+        imageView.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 17)
+        imageView.contentMode = .center
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            imageView.widthAnchor.constraint(equalToConstant: 40),
+            imageView.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        return imageView
+    }
+    
+    /// 明細のタイトルビューを生成
+    private func makeDetailTitleLabelView() -> UIStackView {
+        let titleLabel = UILabel()
+        titleLabel.text = "ランチ"
+        titleLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        
+        let subtitleLabel = UILabel()
+        subtitleLabel.text = "食費・レストラン"
+        subtitleLabel.font = .systemFont(ofSize: 13)
+        subtitleLabel.textColor = .lightGray
+        
+        let detailLabelView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        detailLabelView.axis = .vertical
+        detailLabelView.alignment = .leading
+        detailLabelView.spacing = 2
+        
+        return detailLabelView
+    }
+    
+    /// 金額ラベルの生成
+    func makeAmountlabel() -> UILabel {
+        let amountLabel = UILabel()
+        amountLabel.text = "-¥ 1000"
+        amountLabel.font = .systemFont(ofSize: 20)
+        return amountLabel
     }
     
 }

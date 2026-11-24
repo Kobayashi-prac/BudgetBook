@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class HomeViewController: UIViewController {
     
@@ -18,6 +19,7 @@ class HomeViewController: UIViewController {
         setupNavigationBar()
         setupTableView()
         registerCell()
+        setupDataImportButton()
     }
     
     private func setupNavigationBar() {
@@ -51,6 +53,29 @@ class HomeViewController: UIViewController {
         viewModel.cellType.forEach { type in
             tableView.register(type.cellClass, forCellReuseIdentifier: type.identifier)
         }
+    }
+    
+    private func setupDataImportButton() {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
+        button.imageView?.tintColor = .gray
+        button.imageView?.contentMode = .scaleAspectFit
+        button.contentHorizontalAlignment = .fill
+        button.contentVerticalAlignment = .fill
+        
+        button.addAction(UIAction { _ in
+            let hosting = UIHostingController(rootView: ContentView())
+            self.present(hosting, animated: true)
+        }, for: .touchUpInside)
+        
+        view.addSubview(button)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            button.widthAnchor.constraint(equalToConstant: 80),
+            button.heightAnchor.constraint(equalToConstant: 80)
+        ])
     }
 }
 
